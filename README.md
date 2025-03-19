@@ -15,16 +15,16 @@ All features will be supported in CubixOS 2.0:
 
 <img src="https://github.com/100Sp4rk100/CubixOS-Released/blob/main/Images/comparison1.02.0.png" alt="comparison between 1.0 and 2.0" width=500>  
 
-### Que peut-on faire avec ?  
-* Ecoutez de la musique  
-* Faire des images/ les voir  
-* Lire des fichiers  
-* Partager/ voir un écran d'un autre ordinateur (voir la section [Internet](https://github.com/100Sp4rk100/CubixOS-Released/wiki/Internet)  
-* Charger des sites web (voir la section [Internet](https://github.com/100Sp4rk100/CubixOS-Released/wiki/Internet) )  
+### What can you do with it?  
+* Listen to music  
+* Create images / view them  
+* Read files  
+* Share / view another computer's screen (see the [Internet](https://github.com/100Sp4rk100/CubixOS-Released/wiki/Internet) section)  
+* Load websites (see the [Internet](https://github.com/100Sp4rk100/CubixOS-Released/wiki/Internet) section)
 
-### Comment l'utiliser ?
+### How to use it?
 
-Reportez-vous à la section [Usage](https://github.com/100Sp4rk100/CubixOS-Released/wiki/Usage) 
+Refer to the [Usage](https://github.com/100Sp4rk100/CubixOS-Released/wiki/Usage) section
 
 ## **How do I install it ?**  
 
