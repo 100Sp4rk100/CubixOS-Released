@@ -1,0 +1,742 @@
+-- importation du module de gestion de fichier
+dofile("os/File System Management/File Gestion/File Gestion.lua")
+-- importation du module de gestion de chaine de caracteres
+dofile("os/File System Management/String Gestion/String Gestion.lua")
+-- importation du module de gestion des donnees systeme
+dofile("os/File System Management/Data System Management/Data System Management.lua")
+
+function cleanTextValue(value)
+
+    value = value:match("^%s*(.-)%s*$")
+
+    if value:sub(1, 1) == "\"" and value:sub(-1) == "\"" then
+
+        value = value:sub(2, -2)
+
+    end
+
+    value = value:gsub("\"", "\\\"")
+    return value
+
+end
+
+
+function compileWebsiteFile(args)
+
+    pathOfFile = args[1]
+    pathCompile = args[2]..".web"
+
+    toCompileFile = readFile(pathOfFile..".wb")
+
+    for i, v in ipairs(toCompileFile) do
+
+        cache = v:gsub("[\t]", "")
+        
+        if cache ~= nil then
+
+            splitcache = split(cache, "\"")
+            
+            if #splitcache > 1 then
+
+                splitcache = split(cache, "=")
+                splitcache[1] = splitcache[1]:gsub("[%s]", "")
+                splitcache[2] = cleanTextValue(splitcache[2])
+                
+                cache = splitcache[1] .. "=" .. splitcache[2]
+                toCompileFile[i] = cache
+                
+
+            else
+
+                toCompileFile[i] = cache:gsub("[%s]", "")
+
+            end
+
+        end
+
+    end
+
+    local compileFile = {
+        "dofile(\"os/User Interface/GUI/Screen/Screen.lua\")",
+        "dofile(\"os/Process Management/launchApplication.lua\")",
+        "function closeSite()",
+        "breakSite = false",
+        "end",
+        "function getInputVALUE(id, var)",
+        "if varTABLE[var][1] == \"STRING\" and idLSTC[id][1] == \"inp\" then",
+        "varTABLE[var][2] = window:getInputValue(idLSTC[id][2])",
+        "end",
+        "end",
+        "function setTextVALUE(id, var)",
+        "if varTABLE[var][1] == \"STRING\" and idLSTC[id][1] == \"txt\" then",
+        "window:changeTextValue(idLSTC[id][2], varTABLE[var][2])",
+        "end",
+        "end",
+        "function buttonLink(args)",
+        "if _G[args[1]] ~= nil then",
+        "_G[args[1]]()",
+        "end",
+        "end",
+        "function showG(n)",
+        "if idLST[n] ~= nil then",
+        "for _, i in ipairs(idLST[n]) do",
+        "if idLSTC[i] ~= nil and idLSTC[i][1] == \"rect\" then",
+        "window:showRectangle(idLSTC[i][2])",
+        "elseif idLSTC[i] ~= nil and idLSTC[i][1] == \"txt\" then",
+        "window:showText(idLSTC[i][2])",
+        "elseif idLSTC[i] ~= nil and idLSTC[i][1] == \"btn\" then",
+        "window:showButton(idLSTC[i][2])",
+        "elseif idLSTC[i] ~= nil and idLSTC[i][1] == \"inp\" then",
+        "window:showInput(idLSTC[i][2])",
+        "elseif idLSTC[i] ~= nil and idLSTC[i][1] == \"img\" then",
+        "window:showImage(idLSTC[i][2])",
+        "end",
+        "end",
+        "else",
+        "if idLSTC[n] ~= nil and idLSTC[n][1] == \"rect\" then",
+        "window:showRectangle(idLSTC[n][2])",
+        "elseif idLSTC[n] ~= nil and idLSTC[n][1] == \"txt\" then",
+        "window:showText(idLSTC[n][2])",
+        "elseif idLSTC[n] ~= nil and idLSTC[n][1] == \"btn\" then",
+        "window:showButton(idLSTC[n][2])",
+        "elseif idLSTC[n] ~= nil and idLSTC[n][1] == \"inp\" then",
+        "window:showInput(idLSTC[n][2])",
+        "elseif idLSTC[n] ~= nil and idLSTC[n][1] == \"img\" then",
+        "window:showImage(idLSTC[n][2])",
+        "end",
+        "end",
+        "end",
+        "function hideG(n)",
+        "if idLST[n] ~= nil then",
+        "for _, i in ipairs(idLST[n]) do",
+        "if idLSTC[i] ~= nil and idLSTC[i][1] == \"rect\" then",
+        "window:hideRectangle(idLSTC[i][2])",
+        "elseif idLSTC[i] ~= nil and idLSTC[i][1] == \"txt\" then",
+        "window:hideText(idLSTC[i][2])",
+        "elseif idLSTC[i] ~= nil and idLSTC[i][1] == \"btn\" then",
+        "window:hideButton(idLSTC[i][2])",
+        "elseif idLSTC[i] ~= nil and idLSTC[i][1] == \"inp\" then",
+        "window:hideInput(idLSTC[i][2])",
+        "elseif idLSTC[i] ~= nil and idLSTC[i][1] == \"img\" then",
+        "window:hideImage(idLSTC[i][2])",
+        "end",
+        "end",
+        "else",
+        "if idLSTC[n] ~= nil and idLSTC[n][1] == \"rect\" then",
+        "window:hideRectangle(idLSTC[n][2])",
+        "elseif idLSTC[n] ~= nil and idLSTC[n][1] == \"txt\" then",
+        "window:hideText(idLSTC[n][2])",
+        "elseif idLSTC[n] ~= nil and idLSTC[n][1] == \"btn\" then",
+        "window:hideButton(idLSTC[n][2])",
+        "elseif idLSTC[n] ~= nil and idLSTC[n][1] == \"inp\" then",
+        "window:hideInput(idLSTC[n][2])",
+        "elseif idLSTC[n] ~= nil and idLSTC[n][1] == \"img\" then",
+        "window:hideImage(idLSTC[n][2])",
+        "end",
+        "end",
+        "end",
+        "function updateTick()",
+        "while breakSite do",
+        "window:tick()",
+        "end",
+        "runApplication(appTOlaunch, appTOlaunch)",
+        "end",
+        "function website(launch)",
+        "appTOlaunch=launch",
+        "breakSite = true", 
+        "window = Screen:new()", 
+        "window:erase()", 
+        "window:addButton(0, 49, 0, 51, 2, \"red\", \"X\", 1, 2, \"black\", closeSite)"
+    }
+
+    x = 1
+
+    local GROUP = "{"
+    local GROUPID = "{"
+    local VARTABLE = "{"
+
+    local RECTANGLE_ID = 0
+    local TEXT_ID = 0
+    local BUTTON_ID = 1
+    local INPUT_ID = 0
+    local IMAGE_ID = 0
+    ACTION_TB = {}
+
+    while x <= #toCompileFile do
+
+        local ligne = toCompileFile[x]
+
+        if ligne == "Rectangle:" then
+
+            cacheTb = getInfo()
+
+            c = getVarC(cacheTb["startX"])
+            if c[1] then
+                cacheTb["startX"] = c[2]
+            end
+            c = getVarC(cacheTb["startY"])
+            if c[1] then
+                cacheTb["startY"] = c[2]
+            end
+            c = getVarC(cacheTb["endX"])
+            if c[1] then
+                cacheTb["endX"] = c[2]
+            end
+            c = getVarC(cacheTb["endY"])
+            if c[1] then
+                cacheTb["endY"] = c[2]
+            end
+            c = getVarC(cacheTb["color"])
+            if c[1] then
+                cacheTb["color"] = c[2]
+            else
+                cacheTb["color"] = "\""..cacheTb["color"].."\""
+            end
+
+            table.insert(compileFile, "window:addRectangle("..cacheTb["startX"].."," ..cacheTb["startY"].."," ..cacheTb["endX"].."," ..cacheTb["endY"]..","..cacheTb["color"].."," ..RECTANGLE_ID..")")
+
+            if cacheTb["id"] ~= nil then
+
+                GROUPID = GROUPID .. "[\""..cacheTb["id"].."\"]={\"rect\","..RECTANGLE_ID.."},"
+
+            end
+
+            RECTANGLE_ID = RECTANGLE_ID + 1
+        
+        elseif ligne == "Text:" then
+
+            cacheTb = getInfo()
+
+            c = getVarC(cacheTb["startX"])
+            if c[1] then
+                cacheTb["startX"] = c[2]
+            end
+            c = getVarC(cacheTb["startY"])
+            if c[1] then
+                cacheTb["startY"] = c[2]
+            end
+            c = getVarC(cacheTb["text"])
+            if c[1] then
+                cacheTb["text"] = c[2]
+            else
+                if cacheTb["text"] ~= nil then
+                    cacheTb["text"] = "\""..cacheTb["text"].."\""
+                else
+                    cacheTb["text"] = "\"\""
+                end
+            end
+            c = getVarC(cacheTb["textColor"])
+            if c[1] then
+                cacheTb["textColor"] = c[2]
+            else
+                cacheTb["textColor"] = "\""..cacheTb["textColor"].."\""
+            end
+            c = getVarC(cacheTb["colorBack"])
+            if c[1] then
+                cacheTb["colorBack"] = c[2]
+            else
+                cacheTb["colorBack"] = "\""..cacheTb["colorBack"].."\""
+            end
+
+            table.insert(compileFile, "window:addText(" .. cacheTb["startX"] .. "," .. cacheTb["startY"] .. ",".. cacheTb["text"] .. "," ..  cacheTb["textColor"]..","..cacheTb["colorBack"]..","..TEXT_ID..")")
+
+            if cacheTb["id"] ~= nil then
+
+                GROUPID = GROUPID .. "[\""..cacheTb["id"].."\"]={\"txt\","..TEXT_ID.."},"
+
+            end
+
+            TEXT_ID = TEXT_ID + 1
+
+        elseif ligne == "Button:" then
+
+            cacheTb = getInfo()
+
+            c = getVarC(cacheTb["startX"])
+            if c[1] then
+                cacheTb["startX"] = c[2]
+            end
+            c = getVarC(cacheTb["startY"])
+            if c[1] then
+                cacheTb["startY"] = c[2]
+            end
+            c = getVarC(cacheTb["endX"])
+            if c[1] then
+                cacheTb["endX"] = c[2]
+            end
+            c = getVarC(cacheTb["endY"])
+            if c[1] then
+                cacheTb["endY"] = c[2]
+            end
+            c = getVarC(cacheTb["color"])
+            if c[1] then
+                cacheTb["color"] = c[2]
+            else
+                cacheTb["color"] = "\""..cacheTb["color"].."\""
+            end
+            c = getVarC(cacheTb["text"])
+            if c[1] then
+                cacheTb["text"] = c[2]
+            else
+                cacheTb["text"] = "\""..cacheTb["text"].."\""
+            end
+            c = getVarC(cacheTb["textX"])
+            if c[1] then
+                cacheTb["textX"] = c[2]
+            end
+            c = getVarC(cacheTb["textY"])
+            if c[1] then
+                cacheTb["textY"] = c[2]
+            end
+            c = getVarC(cacheTb["textColor"])
+            if c[1] then
+                cacheTb["textColor"] = c[2]
+            else
+                cacheTb["textColor"] = "\""..cacheTb["textColor"].."\""
+            end
+            c = getVarC(cacheTb["link"])
+            if c[1] then
+                cacheTb["link"] = c[2]
+            else
+                cacheTb["link"] = "\""..cacheTb["link"].."\""
+            end
+
+            table.insert(compileFile, "window:addButton("..BUTTON_ID..","..cacheTb["startX"].."," ..cacheTb["startY"].."," ..cacheTb["endX"].."," ..cacheTb["endY"].."," ..cacheTb["color"]..","..  cacheTb["text"]  .. "," ..cacheTb["textX"].."," ..cacheTb["textY"]..","  .. cacheTb["textColor"] ..",buttonLink,{{" ..cacheTb["link"].."}, {}})")
+
+            if cacheTb["id"] ~= nil then
+
+                GROUPID = GROUPID .. "[\""..cacheTb["id"].."\"]={\"btn\","..BUTTON_ID.."},"
+
+            end
+
+            BUTTON_ID = BUTTON_ID + 1
+
+        elseif ligne == "Input:" then
+
+            cacheTb = getInfo()
+
+            c = getVarC(cacheTb["startX"])
+            if c[1] then
+                cacheTb["startX"] = c[2]
+            end
+            c = getVarC(cacheTb["startY"])
+            if c[1] then
+                cacheTb["startY"] = c[2]
+            end
+            c = getVarC(cacheTb["endX"])
+            if c[1] then
+                cacheTb["endX"] = c[2]
+            end
+            c = getVarC(cacheTb["endY"])
+            if c[1] then
+                cacheTb["endY"] = c[2]
+            end
+            c = getVarC(cacheTb["color"])
+            if c[1] then
+                cacheTb["color"] = c[2]
+            else
+                cacheTb["color"] = "\""..cacheTb["color"].."\""
+            end
+            c = getVarC(cacheTb["text"])
+            if c[1] then
+                cacheTb["text"] = c[2]
+            else
+                cacheTb["text"] = "\""..cacheTb["text"].."\""
+            end
+            c = getVarC(cacheTb["textX"])
+            if c[1] then
+                cacheTb["textX"] = c[2]
+            end
+            c = getVarC(cacheTb["textY"])
+            if c[1] then
+                cacheTb["textY"] = c[2]
+            end
+            c = getVarC(cacheTb["textColor"])
+            if c[1] then
+                cacheTb["textColor"] = c[2]
+            else
+                cacheTb["textColor"] = "\""..cacheTb["textColor"].."\""
+            end
+
+            if cacheTb["mask"] ~= nil then
+
+                c = getVarC(cacheTb["mask"])
+                if c[1] then
+                    cacheTb["mask"] = c[2]
+                else
+                    cacheTb["mask"] = "\""..cacheTb["mask"].."\""
+                end
+
+                table.insert(compileFile, "window:addInput("..INPUT_ID..","..cacheTb["startX"].."," ..cacheTb["startY"].."," ..cacheTb["endX"].."," ..cacheTb["endY"].."," ..cacheTb["color"]..","..  cacheTb["text"]  .. "," ..cacheTb["textX"].."," ..cacheTb["textY"]..","  .. cacheTb["textColor"].. ",".. cacheTb["mask"]..")")
+
+            else
+
+                table.insert(compileFile, "window:addInput("..INPUT_ID..","..cacheTb["startX"].."," ..cacheTb["startY"].."," ..cacheTb["endX"].."," ..cacheTb["endY"].."," ..cacheTb["color"]..","..  cacheTb["text"]  .. "," ..cacheTb["textX"].."," ..cacheTb["textY"]..","  .. cacheTb["textColor"] .. ",\"\")")
+
+            end
+
+            if cacheTb["id"] ~= nil then
+
+                GROUPID = GROUPID .. "[\""..cacheTb["id"].."\"]={\"inp\","..INPUT_ID.."},"
+
+            end
+
+            INPUT_ID = INPUT_ID + 1
+
+        elseif ligne == "Image:" then
+
+            cacheTb = getInfo()
+
+            c = getVarC(cacheTb["x"])
+            if c[1] then
+                cacheTb["x"] = c[2]
+            end
+            c = getVarC(cacheTb["y"])
+            if c[1] then
+                cacheTb["y"] = c[2]
+            end
+
+            createFile(args[2].."TMP/"..IMAGE_ID..'.img')
+            clearFile(args[2].."TMP/"..IMAGE_ID..'.img')
+            local imgTP = split(cacheTb["!img!"], "!!!")
+            imgTP[1] = replaceCharAt(imgTP[1], 6, "=")
+            imgTP[2] = replaceCharAt(imgTP[2], 7, "=")
+            addData(args[2].."TMP/"..IMAGE_ID..'.img', imgTP)
+            table.insert(compileFile, "window:addImage("..cacheTb["x"]..","..cacheTb["y"]..",\""..args[2].."TMP/"..IMAGE_ID..'.img\"'..","..IMAGE_ID..")")
+
+            if cacheTb["id"] ~= nil then
+
+                GROUPID = GROUPID .. "[\""..cacheTb["id"].."\"]={\"img\","..IMAGE_ID.."},"
+
+            end
+
+            IMAGE_ID = IMAGE_ID + 1
+
+        elseif ligne == "GROUP:" then
+
+            cacheTb = {}
+            cachename = ""
+
+            x = x + 1
+
+            while toCompileFile[x] ~= "END" do
+
+                if x>#toCompileFile+1 then
+                    error("missing \"END\"")
+                end
+
+                if toCompileFile[x] ~= nil then
+
+                    cachetxt = split(toCompileFile[x], "=")
+
+                end
+
+                if cachetxt[1] == "name" then
+
+                    cachename = cachetxt[2]
+
+                else
+
+                    table.insert(cacheTb, "\""..toCompileFile[x].."\"")
+
+                end
+
+                x = x + 1
+
+            end
+
+            x = x + 1
+
+            GROUP = GROUP .. "[\""..cachename.."\"]={"
+
+            for _, i in ipairs(cacheTb) do
+
+                GROUP = GROUP .. i .. ","
+
+            end
+
+            GROUP = replaceCharAt(GROUP, #GROUP, "") .. "},"
+
+        elseif ligne == "ACTION:" then
+
+            cacheTb = {}
+            cachename = ""
+
+            x = x + 1
+
+            while toCompileFile[x] ~= "END" do
+
+                if x>#toCompileFile+1 then
+                    error("missing \"END\"")
+                end
+
+                if toCompileFile[x] ~= nil then
+
+                    cachetxt = split(toCompileFile[x], "=")
+
+                end
+
+                if cachetxt[1] == "name" then
+
+                    cachename = cachetxt[2]
+
+                elseif ACTION_TB[cachetxt[1]] then
+
+                    table.insert(cacheTb, cachetxt[1].."()")
+
+                else
+
+                    act = getAction(cachetxt[1])
+                    if act ~= nil then
+
+                        table.insert(cacheTb, act)
+
+                    end
+
+                end
+
+                x = x + 1
+
+            end
+
+            x = x + 1
+
+            if cachename ~= "" then
+
+                table.insert(compileFile, "function "..cachename.."()")
+                for _, i in ipairs(cacheTb) do
+
+                    table.insert(compileFile, i)
+
+                end
+                table.insert(compileFile, "end")
+                
+                ACTION_TB[cachename] = ""
+
+            end
+
+        elseif ligne == "VAR:" then
+
+            cacheTb = {}
+            cachename = ""
+            cachetype = ""
+            cachevalue = ""
+
+            x = x + 1
+
+            while toCompileFile[x] ~= "END" do
+
+                if x>#toCompileFile+1 then
+                    error("missing \"END\"")
+                end
+
+                if toCompileFile[x] ~= nil then
+
+                    cachetxt = split(toCompileFile[x], "=")
+
+                end
+
+                if cachetxt[1] == "name" then
+
+                    cachename = cachetxt[2]
+
+                elseif cachetxt[1] == "type" then
+
+                    cachetype = cachetxt[2]
+
+                elseif cachetxt[1] == "value" then
+
+                    cachevalue = cachetxt[2]
+
+                end
+
+                x = x + 1
+
+            end
+
+            x = x + 1
+
+            if cachetype ~= "" then
+
+                if cachetype == "STRING" then
+
+                    if cachevalue ~= "" then
+                        cachevalue = "\""..tostring(cachevalue).."\""
+                    else
+                        cachevalue = "\"\""
+                    end
+
+                elseif cachetype == "INTEGER" then
+
+                    if cachevalue ~= "" then
+                        cachevalue = tonumber(cachevalue)
+                    else
+                        cachevalue = 0
+                    end
+
+                elseif cachetype == "BOOLEAN" then
+
+                    if cachevalue == "True" or cachevalue == "1" then
+                        cachevalue = "true"
+                    elseif cachevalue == "False" or cachevalue == "0" then
+                        cachevalue = "false"
+                    else
+                        cachevalue = "\"\""
+                    end
+
+                end
+            
+            end
+
+            if cachename ~= "" and cachetype ~= "" then
+
+                VARTABLE = VARTABLE .."[\""..cachename.."\"]={\""..cachetype.."\","..cachevalue.."},"
+
+            end
+
+        elseif ACTION_TB[ligne] ~= nil then
+
+            table.insert(compileFile, ligne.."()")
+            x = x + 1
+
+        elseif extractChar(ligne, 1, 2) == "!!" or ligne == "" then
+
+            x = x + 1
+
+        else
+
+            error(ligne.." is incorrect ! (nul element). At l:"..x)
+
+        end
+
+    end
+
+    GROUP = replaceCharAt(GROUP, #GROUP, "") .. "}"
+    GROUPID = replaceCharAt(GROUPID, #GROUPID, "").."}"
+    VARTABLE = replaceCharAt(VARTABLE, #VARTABLE, "").."}"
+
+    table.insert(compileFile, "window:showButton(0)")
+    table.insert(compileFile, "updateTick()")
+    table.insert(compileFile, "window:erase()")
+    table.insert(compileFile, "window:freeze()")
+    table.insert(compileFile, "end")
+
+    if #GROUP > 1 then
+
+        table.insert(compileFile, 2, "idLST = "..GROUP)
+
+    end
+
+    if #GROUPID > 1 then
+
+        table.insert(compileFile, 2, "idLSTC = "..GROUPID)
+
+    end
+
+    if #VARTABLE > 1 then
+
+        table.insert(compileFile, 2, "varTABLE = "..VARTABLE)
+
+    end
+
+    if fileExists(pathCompile) then
+
+        clearFile(pathCompile)
+
+    end
+
+    createFile(pathCompile)
+    addData(pathCompile, compileFile)
+
+end
+
+function getInfo()
+
+    cacheTb = {}
+
+    while toCompileFile[x] ~= "end" do
+
+        if x>#toCompileFile+1 then
+            error("missing \"end\"")
+        end
+
+        if toCompileFile[x] ~= nil then
+
+            cachetxt = split(toCompileFile[x], "=")
+
+            if #cachetxt > 1 then
+
+                cacheTb[cachetxt[1]] = cachetxt[2]
+
+            end
+
+        end
+
+        x = x + 1
+
+    end
+
+    x = x + 1
+
+    return cacheTb
+
+end
+
+function getVarC(v)
+
+    if v == nil then
+
+        return {false, ""}
+
+    end
+
+    if extractChar(v, 1, 1) == "/" and extractChar(v, #v, #v) == "/" then
+
+        return {true, "varTABLE[\""..replaceCharAt(replaceCharAt(v, #v, ""), 1, "").."\"][2]"}
+
+    else
+
+        return {false, v}
+
+    end
+
+end
+
+function getAction(line)
+
+    if line ~= nil then
+        act = split(line, ":")
+
+        if act[1] == "show" then
+
+            return "showG(\""..act[2].."\")"
+
+        elseif act[1] == "hide" then
+
+            return "hideG(\""..act[2].."\")"
+
+        elseif ACTION_TB[line] ~= nil then
+
+            return line.."()"
+        
+        elseif act[1] == "getinputvalue" then
+
+            c = split(act[2], "-->")
+
+            return "getInputVALUE(\""..c[1].."\",\""..c[2].."\")"
+
+        elseif act[1] == "settextvalue" then
+
+            c = split(act[2], "-->")
+
+            return "setTextVALUE(\""..c[2].."\",\""..c[1].."\")"
+
+        else
+
+            error(line.." is incorrect ! (nul element). At l:"..x)
+
+        end
+
+    end
+
+end

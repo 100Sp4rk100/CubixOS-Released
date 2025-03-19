@@ -1,0 +1,180 @@
+function getValueINT(args)
+
+    local site = ""
+
+    if args[1] then
+
+        site = "true"
+
+    else
+
+        site = "false"
+
+    end
+
+    local ressource = args[2]
+    local id = args[3]
+    local ip = args[4]
+    local value = args[5]
+
+    INTERNET:enableInternet()
+
+    INTERNET:send(INTERNET:makeRequest("get", ressource, ip, id, {["site"]=site, ["value"]=value}))
+
+    local breakW = true
+
+    while breakW do
+
+        INTERNET:receive(2)
+
+        local packets = INTERNET:getPacket()
+
+        for i, line in ipairs(packets) do
+            if line["info"]["ip-sender"] == ip or line["info"]["args"]["$ip-sender$"] == ip or line["info"]["args"]["$alt-ip$"] == ip then
+                if line["packet"] == ressource then
+                    breakW = false
+                    INTERNET:deletePacket(i)
+                    return true, line["info"]["args"]["value"]
+                elseif line["info"]["type"] == "err" then
+                    breakW = false
+                    INTERNET:deletePacket(i)
+                    return false, line["packet"]
+                else
+                    INTERNET:deletePacket(i)
+                end
+            else
+                INTERNET:deletePacket(i)
+            end
+            
+        end
+    
+    end
+
+end
+
+function getFileINT(args)
+
+    local site = ""
+
+    if args[1] then
+
+        site = "true"
+
+    else
+
+        site = "false"
+
+    end
+
+    local ressource = args[2]
+    local id = args[3]
+    local ip = args[4]
+    local path = args[5]
+
+    INTERNET:send(INTERNET:makeRequest("fil", ressource, ip, id, {["site"]=site, ["begin"]="true"}))
+
+    local currentLine = ""
+    local len = 0
+    local fl = {}
+    
+    while currentLine ~= len do
+    
+        INTERNET:receive(2)
+        local packets = INTERNET:getPacket()
+    
+        for i, line in ipairs(packets) do
+    
+            if line["info"]["ip-sender"] == ip or line["info"]["args"]["$ip-sender$"] == ip or line["info"]["args"]["$alt-ip$"] == ip then
+
+                if line["info"]["type"] == "ret" then
+                    if line["info"]["args"]["begin"] == "true" then
+        
+                        tit = line["packet"]
+                        len = line["info"]["args"]["length"]
+                        INTERNET:send(INTERNET:makeRequest("fil", ressource, ip, "0", {["site"]=site, ["begin"]="false", ["line"] = 1}))
+        
+                    else
+        
+                        table.insert(fl, line["packet"])
+                        currentLine = line["info"]["args"]["line"]
+                        INTERNET:send(INTERNET:makeRequest("fil", ressource, ip, "0", {["site"]=site, ["begin"]="false", ["line"] = currentLine + 1}))
+        
+                    end
+
+                elseif line["info"]["type"] == "err" then
+
+                    return false, line["packet"]
+
+                end
+    
+            end
+    
+            INTERNET:deletePacket(i)
+    
+        end
+    
+    end
+    
+    clearFile(path.."/"..tit)
+    for _, l in ipairs(fl) do
+        addTextInFile(path.."/"..tit, l)
+    end
+
+    return true, path.."/"..tit
+
+end
+
+function sendValueINT(args)
+
+    local site = ""
+
+    if args[1] then
+
+        site = "true"
+
+    else
+
+        site = "false"
+
+    end
+
+    local ressource = args[2]
+    local id = args[3]
+    local ip = args[4]
+    local name = args[5]
+    local value = args[6]
+
+    INTERNET:enableInternet()
+
+    INTERNET:send(INTERNET:makeRequest("sen", ressource, ip, id, {["site"]=site, ["value"]=value, ["name"]=name}))
+
+    local breakW = true
+
+    while breakW do
+
+        INTERNET:receive(2)
+
+        local packets = INTERNET:getPacket()
+
+        for i, line in ipairs(packets) do
+            if line["info"]["ip-sender"] == ip or line["info"]["args"]["$ip-sender$"] == ip or line["info"]["args"]["$alt-ip$"] == ip then
+                if line["info"]["type"] == "succ" then
+                    breakW = false, line["packet"]
+                    INTERNET:deletePacket(i)
+                    return true
+                elseif line["info"]["type"] == "err" then
+                    breakW = false
+                    INTERNET:deletePacket(i)
+                    return false, line["packet"]
+                else
+                    INTERNET:deletePacket(i)
+                end
+            else
+                INTERNET:deletePacket(i)
+            end
+            
+        end
+    
+    end
+
+end

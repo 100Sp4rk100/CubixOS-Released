@@ -1,0 +1,22 @@
+-- importation du module de gestion des donnees systeme
+dofile("os/File System Management/Data System Management/Data System Management.lua")
+
+function sharing(args)
+
+    pcall(share)
+
+end
+
+function share()
+
+    if getSystemVar("sharescreen") == "on" then
+    
+        local screen = window:getScreen()
+        INTERNET:enableInternet()
+        local request = INTERNET:makeRequest("req", screen, getSystemVar("sharescreenip"), "1")
+        INTERNET:send(request)
+        os.sleep(0)
+
+    end
+
+end
