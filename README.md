@@ -13,7 +13,7 @@ The program is written in Lua and covers some of the functions of a real operati
 **NOT all** features are supported. Fortunately, you can easily program and integrate your own applications into the OS (see wiki).  
 All features will be supported in CubixOS 2.0:
 
-<img src="https://github.com/100Sp4rk100/CubixOS-Released/blob/main/Images/comparison1.02.0.png" alt="comparison between 1.0 and 2.0" width=500>  
+<img src="https://github.com/100Sp4rk100/CubixOS-Released/blob/main/Images/comparison1.02.0 .jpeg" alt="comparison between 1.0 and 2.0" width=500>  
 
 ### What can you do with it?  
 * Listen to music  
