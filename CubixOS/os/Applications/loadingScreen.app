@@ -172,7 +172,7 @@ function loadingScreen()
 
     init()
 
-    window:addButton(0, 49, 0, 51, 2, "purple", "X", 1, 2, "black", closeApp)
+    window:addButton(0, 49, 0, 51, 2, "red", "X", 1, 2, "black", closeApp)
     window:showButton(0)
 
     updateTick()

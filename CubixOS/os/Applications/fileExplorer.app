@@ -363,13 +363,6 @@ end
 
 -- fonction principale
 
-function mmm()
-
-    clearFile("sss.txt")
-    addTextInFile("sss.txt", window:getScreen())
-
-end
-
 function init()
 
     window = Screen:new()
@@ -428,8 +421,6 @@ function init()
     window:showInput(3)
     window:addButton(8, 30, 3, 37, 3, "orange", "Create", 1, 0, "black", new)
     window:showButton(8)
-
-    window:registerKeyEvent("a", mmm, {})
 
 end
 
