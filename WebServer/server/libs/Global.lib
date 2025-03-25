@@ -1,0 +1,236 @@
+dofile("server/system/File Gestion.lua")
+dofile("server/system/String Gestion.lua")
+dofile("server/system/Data System Management.lua")
+
+function global(packet, main)
+
+    local typereq = packet["info"]["type"]
+
+    if typereq == "get" then
+        -- demande une valeur
+
+        if packet["info"]["args"]["site"] == "true" then
+
+            if fileExists("host/"..packet["packet"]) then
+
+                local dat = getData("host/"..packet["packet"])
+
+                if getDataValue(dat, packet["info"]["args"]["value"]) ~= nil then
+
+                    main:send(main:makeRequest("sen", packet["packet"], packet["info"]["ip-sender"], packet["info"]["id"], {["value"] = getDataValue(dat, packet["info"]["args"]["value"])}))
+
+                else
+
+                    main:send(main:makeRequest("err", "Value is nil", packet["info"]["ip-sender"], packet["info"]["id"], {}))
+
+                end
+
+            else
+
+                main:send(main:makeRequest("err", "File doesn't exist", packet["info"]["ip-sender"], packet["info"]["id"], {}))
+
+            end
+
+        else
+
+            if fileExists("server/$var$/var.dat") then
+
+                local dat = getData("server/$var$/var.dat")
+
+                if getDataValue(dat, packet["packet"]) ~= nil then
+                    
+                    main:send(main:makeRequest("sen", packet["packet"], packet["info"]["ip-sender"], packet["info"]["id"], {["value"] = getDataValue(dat, packet["packet"])}))
+
+                else
+
+                    main:send(main:makeRequest("err", "Value is nil", packet["info"]["ip-sender"], packet["info"]["id"], {}))
+                    
+                end
+
+            else
+
+                main:send(main:makeRequest("err", "Server var file doesn't exist", packet["info"]["ip-sender"], packet["info"]["id"], {}))
+
+            end
+
+        end
+
+        return true
+    
+    elseif typereq == "err" then
+        -- retourne une erreur
+        print("ERROR in a request : "..packet["packet"])
+
+        return true
+
+    elseif typereq == "fil" then
+        -- demande d'envoie de fichier
+        if packet["info"]["args"]["site"] == "true" then
+
+            if fileExists("host/"..packet["packet"]) then
+
+                if packet["info"]["args"]["begin"] == "true" then
+
+                    local splitCache = split(packet["packet"], "/")
+
+                    main:send(main:makeRequest("ret", splitCache[#splitCache], packet["info"]["ip-sender"], packet["info"]["id"], {["length"]=#readFile("host/"..packet["packet"]), ["begin"] = "true"}))
+
+                else
+
+                    local splitCache = split(packet["packet"], "/")
+                    local file = readFile("host/"..packet["packet"])
+
+                    if file[packet["info"]["args"]["line"]] ~= nil then
+                        main:send(main:makeRequest("ret", file[packet["info"]["args"]["line"]], packet["info"]["ip-sender"], packet["info"]["id"], {["length"]=#file, ["begin"] = "false", ["title"]=splitCache[#splitCache], ["line"]= packet["info"]["args"]["line"]}))
+                    end
+
+                end
+
+            else
+
+                main:send(main:makeRequest("err", "File doesn't exist", packet["info"]["ip-sender"], packet["info"]["id"], {}))
+
+            end
+
+        else
+
+            if fileExists("server/$file$/"..packet["packet"]) then
+
+                if packet["info"]["args"]["begin"] == "true" then
+
+                    local splitCache = split(packet["packet"], "/")
+
+                    main:send(main:makeRequest("ret", splitCache[#splitCache], packet["info"]["ip-sender"], packet["info"]["id"], {["length"]=#readFile("server/$file$/"..packet["packet"]), ["begin"] = "true"}))
+
+                else
+
+                    local splitCache = split(packet["packet"], "/")
+                    local file = readFile("server/$file$/"..packet["packet"])
+
+                    if file[packet["info"]["args"]["line"]] ~= nil then
+                        main:send(main:makeRequest("ret", file[packet["info"]["args"]["line"]], packet["info"]["ip-sender"], packet["info"]["id"], {["length"]=#file, ["begin"] = "false", ["title"]=splitCache[#splitCache], ["line"]= packet["info"]["args"]["line"]}))
+                    end
+                    
+                end
+
+            else
+
+                main:send(main:makeRequest("err", "File doesn't exist", packet["info"]["ip-sender"], packet["info"]["id"], {}))
+
+            end
+
+        end
+
+        return true
+    
+    elseif typereq == "sen" then
+        -- envoie d'une valeur
+
+        if packet["info"]["args"]["site"] == "true" then
+
+            if fileExists("host/"..packet["packet"]) then
+
+                local dat = getData("host/"..packet["packet"])
+                local val = ""
+                local name = ""
+
+                if packet["info"]["args"]["value"] ~= nil then
+                    val = packet["info"]["args"]["value"]
+                end
+                if packet["info"]["args"]["name"] ~= nil then
+                    name = packet["info"]["args"]["name"]
+                end
+
+                if getDataValue(dat, packet["info"]["args"]["name"]) ~= nil then
+
+                    for i, line in ipairs(dat) do
+
+                        local var = split(line, "=")
+                
+                        if var[1] == name then
+                
+                            dat[i] = name.."="..val
+                            break
+                
+                        end
+                
+                    end
+
+                else
+
+                    table.insert(dat, name.."="..val)
+
+                end
+                changeData("host/"..packet["packet"], dat)
+
+                main:send(main:makeRequest("succ", "Done", packet["info"]["ip-sender"], packet["info"]["id"], {}))
+
+            else
+
+                main:send(main:makeRequest("err", "File doesn't exist", packet["info"]["ip-sender"], packet["info"]["id"], {}))
+
+            end
+
+        else
+
+            if fileExists("server/$var$/var.dat") then
+
+                local dat = getData("server/$var$/var.dat")
+                local val = ""
+                local name = ""
+
+                if packet["info"]["args"]["value"] ~= nil then
+                    val = packet["info"]["args"]["value"]
+                end
+                if packet["info"]["args"]["name"] ~= nil then
+                    name = packet["info"]["args"]["name"]
+                end
+
+                if getDataValue(dat, packet["info"]["args"]["name"]) ~= nil then
+
+                    for i, line in ipairs(dat) do
+
+                        local var = split(line, "=")
+                
+                        if var[1] == name then
+                
+                            dat[i] = name.."="..val
+                            break
+                
+                        end
+                
+                    end
+
+                else
+
+                    table.insert(dat, name.."="..val)
+
+                end
+                changeData("server/$var$/var.dat", dat)
+
+                main:send(main:makeRequest("succ", "Done", packet["info"]["ip-sender"], packet["info"]["id"], {}))
+
+            else
+
+                main:send(main:makeRequest("err", "Server var file doesn't exist", packet["info"]["ip-sender"], packet["info"]["id"], {}))
+
+            end
+
+        end
+
+        return true
+
+    elseif typereq == "ret" then
+        -- envoie d'un retour de morceau de fichier
+
+    elseif typereq == "succ" then
+        -- signaler une reussite
+
+    elseif typereq == "SCsh" then
+        -- partage d'ecran
+
+    end
+
+    return false
+
+end

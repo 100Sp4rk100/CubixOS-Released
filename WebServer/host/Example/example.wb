@@ -1,0 +1,86 @@
+!! declaration des variables
+
+VAR:
+    name=nom
+    type=STRING
+END
+
+!!----------------------------------------------
+!! declaration des groupes
+GROUP:
+    name=allCommon
+    TXTBienvenueBase
+    TXTBienvenue
+    INPUTnom
+    btnNom
+END
+
+!!----------------------------------------------
+!! declaration des actions
+ACTION:
+    name=showAllcommon
+    show:allCommon
+END
+
+ACTION:
+    name=setName
+    settextvalue:nom --> TXTBienvenue
+END
+
+ACTION:
+    name=getName
+    getinputvalue:INPUTnom --> nom
+    setName
+END
+
+!!----------------------------------------------
+!! ajout des elements du site
+
+Text:
+    colorBack = blue
+    textColor = black
+    startX = 3
+    startY = 3
+    text= "Bienvenue :"
+    id=TXTBienvenueBase
+end
+
+Text:
+    colorBack = blue
+    textColor = black
+    startX = 15
+    id=TXTBienvenue
+    startY = 3
+    text= ""
+end
+
+Input:
+    startY = 6
+    startX = 3
+    endX = 15
+    endY = 8
+    color = yellow
+    id = INPUTnom
+    text ="Votre nom"
+    textX = 1
+    text Y = 1
+    textColor = black
+end
+
+Button:
+    startY = 9
+    startX = 7
+    endX = 11
+    endY = 11
+    color = green
+    id = btnNom
+    text ="OK"
+    textX = 1
+    text Y = 1
+    textColor = black
+    link = getName
+end
+
+!!----------------------------------------------
+!! affichage du site
+showAllcommon
